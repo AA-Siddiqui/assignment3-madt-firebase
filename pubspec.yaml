@@ -1,0 +1,39 @@
+name: assignment3_firebase
+description: Remember the Location app
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.19.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # Firebase dependencies
+  firebase_auth: ^5.3.4
+  firebase_core: ^3.9.0
+  cloud_firestore: ^5.6.6
+  
+  # Image handling
+  image_picker:
+  cached_network_image:
+  
+  # UI utilities
+  cupertino_icons:
+  flutter_spinkit:
+
+  path:
+  path_provider:
+  provider:
+  shared_preferences:
+  
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true

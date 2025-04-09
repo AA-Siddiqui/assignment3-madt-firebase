@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1007467050437",
+    "project_id": "assignment-3-mad-theory",
+    "storage_bucket": "assignment-3-mad-theory.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1007467050437:android:2ed6f1dbc0abb1115587ac",
+        "android_client_info": {
+          "package_name": "com.addanabdullahsiddiqui.assignment3_firebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD57NgeVOHLJDjnSfb49AlbNXg2cgDEm_E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
