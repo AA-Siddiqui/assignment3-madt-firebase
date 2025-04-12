@@ -1,12 +1,13 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/location_note.dart';
 
 class LocationService with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final SupabaseClient _supabase = Supabase.instance.client;
   List<LocationNote> _locations = [];
 
   List<LocationNote> get locations => _locations;
@@ -49,7 +50,7 @@ class LocationService with ChangeNotifier {
       String? imagePath;
 
       if (imageFile != null) {
-        imagePath = await _saveImage(imageFile);
+        imagePath = await _saveImage(imageFile, userId);
       }
 
       // Create document in Firestore
@@ -100,7 +101,7 @@ class LocationService with ChangeNotifier {
           await _deleteImage(imagePath);
         }
         // Save new image
-        imagePath = await _saveImage(newImageFile);
+        imagePath = await _saveImage(newImageFile, location.userId);
       }
 
       // Update in Firestore
@@ -156,20 +157,49 @@ class LocationService with ChangeNotifier {
     }
   }
 
-  Future<String> _saveImage(XFile image) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final filename = '${DateTime.now().millisecondsSinceEpoch}.jpg';
-    final path = '${directory.path}/$filename';
+  Future<String> _saveImage(XFile image, int userId) async {
+    try {
+      final filename = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final filePath = 'user_$userId/$filename';
 
-    await File(image.path).copy(path);
-    return path;
+      // Upload file to Supabase Storage
+      final file = File(image.path);
+      final response =
+          await _supabase.storage.from('images').upload(filePath, file);
+
+      print("Upload Response: $response");
+
+      // Get public URL for the uploaded image
+      final imageUrl = _supabase.storage.from('images').getPublicUrl(filePath);
+
+      return imageUrl;
+    } catch (e) {
+      print('Error uploading image to Supabase: $e');
+      rethrow;
+    }
   }
 
   Future<void> _deleteImage(String path) async {
     try {
-      final file = File(path);
-      if (await file.exists()) {
-        await file.delete();
+      // Check if the path is a Supabase URL
+      if (path.contains('storage.googleapis.com') ||
+          path.contains('supabase')) {
+        // Extract the file path from the URL
+        final uri = Uri.parse(path);
+        final pathSegments = uri.pathSegments;
+
+        // Look for 'images' in the path segments and construct the file path from there
+        int imagesIndex = pathSegments.indexOf('images');
+        if (imagesIndex >= 0 && imagesIndex < pathSegments.length - 1) {
+          final filePath = pathSegments.sublist(imagesIndex + 1).join('/');
+          await _supabase.storage.from('images').remove([filePath]);
+        }
+      } else {
+        // Handle legacy case (local file)
+        final file = File(path);
+        if (await file.exists()) {
+          await file.delete();
+        }
       }
     } catch (e) {
       print('Error deleting image: $e');

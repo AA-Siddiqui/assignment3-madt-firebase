@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import '../models/location_note.dart';
 import 'location_form_screen.dart';
@@ -36,8 +35,8 @@ class LocationDetailScreen extends StatelessWidget {
               Center(
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Image.file(
-                    File(location.imagePath!),
+                  child: Image.network(
+                    location.imagePath!,
                     height: 250,
                     width: double.infinity,
                     fit: BoxFit.cover,

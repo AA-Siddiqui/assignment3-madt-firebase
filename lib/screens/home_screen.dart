@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/auth_service.dart';
@@ -113,8 +112,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         leading: location.imagePath != null
                             ? ClipRRect(
                                 borderRadius: BorderRadius.circular(4),
-                                child: Image.file(
-                                  File(location.imagePath!),
+                                child: Image.network(
+                                  location.imagePath!,
                                   width: 56,
                                   height: 56,
                                   fit: BoxFit.cover,

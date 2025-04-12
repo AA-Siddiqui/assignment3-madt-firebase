@@ -129,10 +129,31 @@ class _LocationFormScreenState extends State<LocationFormScreen> {
                             File(_imageFile!.path),
                             fit: BoxFit.cover,
                           )
-                        : Image.file(
-                            File(_existingImagePath!),
-                            fit: BoxFit.cover,
-                          ),
+                        : _existingImagePath!.startsWith('http')
+                            ? Image.network(
+                                _existingImagePath!,
+                                fit: BoxFit.cover,
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      value:
+                                          loadingProgress.expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!
+                                              : null,
+                                    ),
+                                  );
+                                },
+                              )
+                            : Image.file(
+                                File(_existingImagePath!),
+                                fit: BoxFit.cover,
+                              ),
                   )
                 : Icon(
                     Icons.image,
